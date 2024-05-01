@@ -3,7 +3,7 @@
 #define SIMPLE_CONTROLLER_HPP
 
 #include <rclcpp/rclcpp.hpp>
-#include <geometry_msgs/msg.twist_stamped.hpp>
+#include <geometry_msgs/msg/twist_stamped.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <Eigen/Core>
 
@@ -20,7 +20,7 @@ class SimpleController : public rclcpp::Node
 
         double wheel_radius_;
         double wheel_separation_;
-        Eigen::Matrix2d spead_conversion_;
+        Eigen::Matrix2d speed_conversion_;
 
 };
 

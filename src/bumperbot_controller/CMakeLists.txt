@@ -20,7 +20,8 @@ include_directories(include)
 include_directories(${EIGEN3_INCLUDE_DIR})
 
 add_executable(simple_controller src/simple_controller.cpp)
-ament_target_depenencies(simple_controller rclcpp geometry_msgs std_msgs ${EIGEN_LIBRARIES})
+ament_target_dependencies(simple_controller rclcpp geometry_msgs std_msgs ${EIGEN_LIBRARIES})
+
 
 install(
   DIRECTORY include
@@ -29,7 +30,7 @@ install(
 
 install(TARGETS 
   simple_controller
-  DISTINATION lib/${PROJECT_NAME}
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 install(

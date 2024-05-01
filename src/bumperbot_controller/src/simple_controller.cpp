@@ -14,7 +14,7 @@ SimpleController::SimpleController(const std::string & name) : Node(name)
     RCLCPP_INFO_STREAM(get_logger(), "Using wheel_separation " << wheel_separation_);
 
     wheel_cmd_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>("/simple_velocity_controller/commands", 10);
-    vel_sub_ create_subscription<geometry_msgs::msg::TwistStamped>("/bumperbot_controller/cmd", 10, 
+    vel_sub_ = create_subscription<geometry_msgs::msg::TwistStamped>("/bumperbot_controller/cmd", 10, 
                                                                    std::bind(&SimpleController::velCallback, this, _1));
 
     speed_conversion_ << wheel_radius_ / 2, wheel_radius_ / 2, wheel_radius_ / wheel_separation_, -wheel_radius_ / wheel_separation_;
