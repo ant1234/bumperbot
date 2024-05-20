@@ -101,6 +101,9 @@ class SimpleController(Node):
         self.theta_ += d_theta
         self.x_ += d_s * math.cos(self.theta_)
         self.y_ += d_s * math.sin(self.theta_)
+
+        # self.get_logger().info("linear: %f, angular: %f" % (linear, angular))
+        # self.get_logger().info("x: %f, y: %f, theta: %f" % (self.x_, self.y_, self.theta_))
         
         # Compose and publish the odom message
         q = quaternion_from_euler(0, 0, self.theta_)

@@ -2,7 +2,7 @@
 #include <Eigen/Geometry>
 using std::placeholders::_1;
 
-SimpleController::SimpleController(const std::string & name) : Node(name), left_wheel_previous_position_(0.0), right_wheel_previous_position_(0.0)
+SimpleController::SimpleController(const std::string & name) : Node(name), left_wheel_previous_position_(0.0), right_wheel_previous_position_(0.0), x_(0.0), y_(0.0), theta_(0.0)
 {
     declare_parameter("wheel_radius", 0.033);
     declare_parameter("wheel_separation", 0.17);
@@ -62,7 +62,16 @@ void SimpleController::jointCallback(const sensor_msgs::msg::JointState & msg)
     double linear = (wheel_radius_ * fi_right + wheel_radius_ * fi_left) / 2;
     double angular = (wheel_radius_ * fi_right - wheel_radius_ * fi_left) / wheel_separation_;
 
+    double d_s = (wheel_radius_ * dp_right + wheel_radius_ * dp_left) / 2;
+    double d_theta = (wheel_radius_ * dp_right - wheel_radius_ * dp_left) / wheel_separation_;
+
+    theta_ += d_theta;
+    x_ += d_s * cos(theta_);
+    y_ += d_s * sin(theta_); 
+
     RCLCPP_INFO_STREAM(get_logger(), "Linear : " << linear << " Angular : " << angular);
+    RCLCPP_INFO_STREAM(get_logger(), "x:  : " << x_ << " y : " << y_ << " theta : " << theta_);
+
 }
 
 

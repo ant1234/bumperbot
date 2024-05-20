@@ -31,6 +31,10 @@ class SimpleController : public rclcpp::Node
 
         rclcpp::Time previous_time_;
 
+        double x_;
+        double y_;
+        double theta_;
+
 
 };
 
