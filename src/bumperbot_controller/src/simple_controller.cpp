@@ -35,6 +35,10 @@ SimpleController::SimpleController(const std::string & name) : Node(name), left_
     odom_msg_.pose.pose.orientation.z = 0.0;
     odom_msg_.pose.pose.orientation.w = 1.0;
 
+    transform_broadcaster_ = std::make_unique<tf2_ros::TransformBroadcaster>(*this);
+    transform_stamped_.header.frame_id = "odom";
+    transform_stamped_.child_frame_id = "base_footprint";
+
     RCLCPP_INFO_STREAM(get_logger(), "The conversion matrix is : \n" << speed_conversion_);
 
 
@@ -91,8 +95,17 @@ void SimpleController::jointCallback(const sensor_msgs::msg::JointState & msg)
     odom_msg_.pose.pose.position.y = y_;
     odom_msg_.twist.twist.linear.x = linear;
     odom_msg_.twist.twist.angular.z = angular;
-    odom_pub_->publish(odom_msg_);
 
+    transform_stamped_.transform.translation.x = x_;
+    transform_stamped_.transform.translation.y = y_;
+    transform_stamped_.transform.rotation.x = q.x();
+    transform_stamped_.transform.rotation.y = q.y();
+    transform_stamped_.transform.rotation.z = q.z();
+    transform_stamped_.transform.rotation.w = q.w();
+    transform_stamped_.header.stamp = get_clock()->now();
+
+    odom_pub_->publish(odom_msg_);
+    transform_broadcaster_->sendTransform(transform_stamped_);
 
     RCLCPP_INFO_STREAM(get_logger(), "Linear : " << linear << " Angular : " << angular);
     RCLCPP_INFO_STREAM(get_logger(), "x:  : " << x_ << " y : " << y_ << " theta : " << theta_);
