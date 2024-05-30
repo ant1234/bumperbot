@@ -23,6 +23,11 @@ class KalmanFilter : public rclcpp::Node
 
         nav_msgs::msg::Odometry kalman_odom_;
 
+        double motion_variance_;
+        double measurement_variance_;
+
+        void measurement_update();
+
         void odomCallback(const nav_msgs::msg::Odometry & odom);
 
         void imuCallback(const sensor_msgs::msg::Imu & imu);
