@@ -7,7 +7,7 @@
 class KalmanFilter : public rclcpp::Node
 {
     public:
-        KalmanFilter(cost std::string & name);
+        KalmanFilter(const std::string & name);
     
     private:
         rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
@@ -26,7 +26,9 @@ class KalmanFilter : public rclcpp::Node
         double motion_variance_;
         double measurement_variance_;
 
-        void measurement_update();
+        void measurementUpdate();
+
+        void statePrediction();
 
         void odomCallback(const nav_msgs::msg::Odometry & odom);
 

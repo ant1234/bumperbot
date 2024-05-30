@@ -10,7 +10,7 @@ class KalmanFilter(Node):
         super().__init__("kalman_filter")
 
         self.odom_sub_ = self.create_subscription("bumperbot_controller/odom_noisy", self.odomCallback, 10)
-        self.imu_sub_ = self.create_subscription("imu/data", self.imuCallback, 10)
+        self.imu_sub_ = self.create_subscription("imu/out", self.imuCallback, 10)
         self.odom_pub_ = self.create_publisher(Odometry, "bumperbot_controller/odom_kalman", 10)
 
         self.mean_ = 0.0
@@ -33,6 +33,10 @@ class KalmanFilter(Node):
     def imuCallback(self, imu):
         self.imu_angular_z_ = imu.angular_velocity.z
 
+    def statePrediction(self):
+        self.mean_ = self.mean_ + self.motion_
+        self.variance_ = self.variance_ + self.motion_variance_
+
     def odomCallback(self, odom):
         self.kalman_odom_ = odom
 
@@ -43,12 +47,21 @@ class KalmanFilter(Node):
             self.is_first_odom_ = False
             return
         
+        self.motion_ = odom.twist.twist.angular.z - self.last_angular_z_
+        
         self.statePrediction()
 
         self.measurementUpdate()
 
-    def statePrediction(self):
-        return
+        self.kalman_odom_.twist.twist.angular.z = self.mean_
+        self.odom_pub_.publish(self.kalman_odom_)
+
+def main():
+    rclpy.init()
+    kalman_filter = KalmanFilter()
+    rclpy.spin(kalman_filter)
+    kalman_filter.destroy_node()
+    rclpy.shutdown()
     
-    def measurementUpdate(self):
-        return
+if __name__ == "__main__":
+    main()
