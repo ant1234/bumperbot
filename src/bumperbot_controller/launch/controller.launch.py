@@ -24,7 +24,7 @@ def noisy_controller(context, *args, **kargs):
 
     noisy_controller_cpp = Node(
         package="bumperbot_controller",
-        executable="noisy_controller.cpp",
+        executable="noisy_controller",
         parameters=[
             {"wheel_radius": wheel_radius + wheel_radius_error,
             "wheel_separation": wheel_separation + wheel_radius_error}
