@@ -45,10 +45,10 @@ OdometryMotionModel::OdometryMotionModel(const std::string & name)
     alpha4_ = get_parameter("alpha4").as_double();
     nr_samples_ = get_parameter("nr_samples").as_int();
 
-    if(nr_samples > 0) {
+    if(nr_samples_ > 0) {
         samples_.poses = std::vector<geometry_msgs::msg::Pose>(nr_samples_, geometry_msgs::msg::Pose());
     } else {
-        RCLCPP_FATAL_STREAM(get_logger(), "Invalid number of samples requested: " << nr_samples);
+        RCLCPP_FATAL_STREAM(get_logger(), "Invalid number of samples requested: " << nr_samples_);
     }
 
     odom_sub_ = create_subscription<nav_msgs::msg::Odometry>("bumperbot_controller/odom", 10, std::bind(&OdometryMotionModel::odomCallback, this, _1));
@@ -58,7 +58,8 @@ OdometryMotionModel::OdometryMotionModel(const std::string & name)
 
 void OdometryMotionModel::odomCallback(const nav_msgs::msg::Odometry & odom)
 {
-    tf2::Quaternion q(odom.pose.pose.orientation.x, odom.pose.pose.orientation.x, odom.pose.pose.orientation.y, odom.pose.pose.orientation.z, odom.pose.pose.orientation.w);
+    tf2::Quaternion q(odom.pose.pose.orientation.x, odom.pose.pose.orientation.y,
+            odom.pose.pose.orientation.z, odom.pose.pose.orientation.w);
     tf2::Matrix3x3 m(q);
     double roll, pitch, yaw;
     m.getRPY(roll, pitch, yaw);
@@ -87,11 +88,11 @@ void OdometryMotionModel::odomCallback(const nav_msgs::msg::Odometry & odom)
     double trasl_variance = alpha3_ * delta_trasl + alpha4_ * (delta_rot1 + delta_rot2);
     double rot2_variance = alpha1_ * delta_rot2 + alpha2_ * delta_trasl;
 
-    unsigned seed = std::chrono::system_clock::now().time_since_ephoch().count();
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
     std::default_random_engine noise_generator(seed);
-    std::nomal_distribution<double> rot1_noise(0.0, rot1_variance);
-    std::nomal_distribution<double> trasl_noise(0.0, trasl_variance);
-    std::nomal_distribution<double> rot2_noise(0.0, rot2_variance);
+    std::normal_distribution<double> rot1_noise(0.0, rot1_variance);
+    std::normal_distribution<double> trasl_noise(0.0, trasl_variance);
+    std::normal_distribution<double> rot2_noise(0.0, rot2_variance);
 
     for(auto & sample : samples_.poses) {
 
