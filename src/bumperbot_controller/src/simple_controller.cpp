@@ -18,7 +18,7 @@ SimpleController::SimpleController(const std::string & name) : Node(name), left_
     previous_time_ = get_clock()->now();
 
     wheel_cmd_pub_ = create_publisher<std_msgs::msg::Float64MultiArray>("/simple_velocity_controller/commands", 10);
-    vel_sub_ = create_subscription<geometry_msgs::msg::TwistStamped>("/bumperbot_controller/cmd", 10, 
+    vel_sub_ = create_subscription<geometry_msgs::msg::Twist>("/bumperbot_controller/cmd", 10, 
                                                                    std::bind(&SimpleController::velCallback, this, _1));
 
     joint_sub_ = create_subscription<sensor_msgs::msg::JointState>("/joint_state", 10, 
@@ -44,9 +44,9 @@ SimpleController::SimpleController(const std::string & name) : Node(name), left_
 
 }
 
-void SimpleController::velCallback(const geometry_msgs::msg::TwistStamped & msg) 
+void SimpleController::velCallback(const geometry_msgs::msg::Twist & msg) 
 {
-    Eigen::Vector2d robot_speed(msg.twist.linear.x, msg.twist.angular.z);
+    Eigen::Vector2d robot_speed(msg.linear.x, msg.angular.z);
 
     Eigen::Vector2d wheel_speed = speed_conversion_.inverse() * robot_speed;
 
