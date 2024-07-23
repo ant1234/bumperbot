@@ -8,8 +8,18 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 find_package(rclpy REQUIRED)
+find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
+
+
+add_executable(safety_stop src/safety_stop.cpp)
+ament_target_dependencies(safety_stop rclcpp std_msgs sensor_msgs)
+
+install(TARGETS 
+  safety_stop
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 ament_python_install_package(${PROJECT_NAME})
 
